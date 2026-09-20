@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 7 - I Have a Pencil (Image Ver.)</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+    :root {
+      --ink: #2b3a42;
+      --paper: #ffffff;
+      --bg-color: #f0f4f8;
+      --green: #a8e6cf;
+      --green-dark: #88c9b0;
+      --blue: #dcedc1;
+      --yellow: #ffd3b6;
+      --orange: #ffaaa5;
+      --pink: #ff8b94;
+      --line: #e2e8f0;
+      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+    
+    * { box-sizing: border-box; }
+    
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+    }
+    
+    .app {
+      width: min(1200px, 96vw);
+      background: var(--paper);
+      border-radius: 32px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .topbar {
+      background: #ffffff;
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .title-wrap { display: flex; align-items: center; gap: 18px; }
+    
+    .badge {
+      width: 72px; height: 72px; border-radius: 24px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+      color: white; font-weight: 900; font-size: 28px;
+      box-shadow: 0 8px 16px rgba(255, 154, 158, 0.4);
+    }
+    
+    h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+    .subtitle { margin-top: 6px; color: #64748b; font-size: 15px; font-weight: 500; }
+    
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+    
+    .btn {
+      border: none;
+      background: #f1f5f9;
+      color: var(--ink);
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.05);
+      transition: all 0.15s ease;
+    }
+    
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08); }
+    .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05); }
+    .btn.small { font-size: 13px; padding: 10px 14px; }
+    
+    .btn.green { background: #bdf2d5; color: #1e5631; }
+    .btn.blue { background: #cce5ff; color: #004085; }
+    .btn.yellow { background: #ffe4a0; color: #856404; }
+    .btn.pink { background: #ffc2d1; color: #721c24; }
+    .btn.orange { background: #ffdfba; color: #cc5500; }
+    .btn.red { background: #ffb3ba; color: #721c24; }
+
+    .steps {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+      padding: 20px 32px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+    }
+    
+    .step-btn {
+      border: none;
+      background: #ffffff;
+      color: #94a3b8;
+      padding: 14px 10px;
+      border-radius: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    
+    .step-btn:hover { background: #f1f5f9; color: #475569; }
+    .step-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(118, 75, 162, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .stage { padding: 32px; background: #ffffff; flex: 1; }
+    
+    .panel {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+    
+    .panel h2 { margin: 0 0 10px; font-size: 26px; font-weight: 800; color: #1e293b; }
+    .guide { color: #64748b; line-height: 1.6; margin: 0 0 24px; font-size: 16px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px; }
+    
+    .box {
+      background: #f8fafc;
+      border-radius: 24px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
+    }
+    
+    .box h3 { margin: 0 0 16px; font-size: 18px; color: #334155; display: flex; align-items: center; gap: 8px; }
+    
+    .chalk {
+      background: #2c3e50;
+      color: #ecf0f1;
+      border: 6px solid #e67e22;
+      border-radius: 20px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.1);
+      padding: 24px;
+      text-align: center;
+    }
+    .chalk .big { font-size: 32px; font-weight: 900; line-height: 1.3; }
+    .chalk .sub { font-size: 20px; font-weight: 700; margin-top: 10px; color: #f1c40f; display: flex; justify-content: center; align-items: center; }
+
+    .scene {
+      min-height: 420px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #90EE90 50%, #3CB371 100%);
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .hill {
+      position: absolute; bottom: 0; left: -10%; width: 120%; height: 45%;
+      background: #4caf50; border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+    }
+    
+    .tree { position: absolute; left: 10%; bottom: 25%; width: 60px; height: 140px; background: #795548; border-radius: 10px; }
+    .tree:before {
+      content: ""; position: absolute; width: 160px; height: 160px; left: -50px; top: -90px;
+      border-radius: 50%; background: #2e7d32;
+      box-shadow: 40px 10px 0 #388e3c, -30px 20px 0 #43a047;
+    }
+    
+    .cloud { position: absolute; background: rgba(255,255,255,0.9); border-radius: 999px; }
+    .c1 { left: 20%; top: 12%; width: 120px; height: 40px; }
+    .c2 { right: 15%; top: 16%; width: 140px; height: 45px; }
+    .butterfly { position: absolute; font-size: 32px; animation: float 3s ease-in-out infinite; }
+    .b1 { right: 25%; top: 25%; } .b2 { right: 10%; top: 35%; animation-delay: 1s; }
+    @keyframes float { 50% { transform: translateY(-12px) rotate(5deg); } }
+
+    .hidden-item {
+      position: absolute; border: none;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(5px);
+      border-radius: 16px;
+      padding: 8px 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+    .hidden-item:hover { transform: scale(1.1); }
+    .hidden-item.found { background: #ffd700; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+    
+    .hidden-img { width: 44px; height: 44px; object-fit: contain; pointer-events: none; display: block; }
+    .icon-img { width: 24px; height: 24px; object-fit: contain; vertical-align: middle; margin-right: 8px; }
+    .item-img { width: 50px; height: 50px; object-fit: contain; margin: 0 auto 8px; display: block; }
+    .bag-img { width: 90px; height: 90px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
+    .large-img { width: 64px; height: 64px; object-fit: contain; vertical-align: middle; margin-right: 12px; }
+
+    .checklist { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .check {
+      border: none; border-radius: 16px; padding: 12px 16px;
+      background: #ffffff; display: flex; justify-content: space-between; align-items: center; font-weight: 800;
+      box-shadow: var(--shadow-sm); color: #475569;
+    }
+    .check.done { background: #dcfce7; color: #166534; }
+    .progress { height: 14px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+    .bar { height: 100%; background: linear-gradient(90deg, #34d399, #10b981); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    .item-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .item-btn {
+      min-width: 120px; border: none; background: #ffffff;
+      border-radius: 20px; padding: 16px 12px; font-weight: 800; cursor: pointer;
+      box-shadow: var(--shadow-sm); transition: 0.2s; color: #334155;
+    }
+    .item-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); background: #f8fafc; }
+
+    .bag-area {
+      min-height: 320px;
+      display: grid; place-items: center;
+      background: #ffffff;
+      border: 3px dashed #cbd5e1;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .bag {
+      width: 180px; height: 180px; border-radius: 40px 40px 24px 24px;
+      background: #e67e22;
+      border: 8px solid #d35400; position: relative;
+      box-shadow: 0 12px 0 #b34a00;
+    }
+    .bag:before {
+      content: ""; position: absolute; left: 35px; right: 35px; top: -60px; height: 80px;
+      border: 12px solid #d35400; border-bottom: none; border-radius: 60px 60px 0 0;
+    }
+    .bag:after {
+      content: ""; position: absolute; width: 80px; height: 46px; left: 42px; bottom: 30px;
+      background: #f1c40f; border: 6px solid #d35400; border-radius: 12px;
+    }
+    .bag-reveal { position: absolute; bottom: 30px; width: 100%; text-align: center; z-index: 3; }
+    .bag-reveal.fail { font-size: 80px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2)); }
+
+    .result {
+      margin-top: 16px; padding: 18px; border-radius: 20px;
+      border: none; background: #ffffff; line-height: 1.6; font-weight: 800; white-space: pre-line;
+      box-shadow: var(--shadow-sm); text-align: center; font-size: 16px;
+    }
+    .result.good { background: #dcfce7; color: #166534; }
+    .result.bad { background: #fee2e2; color: #991b1b; }
+    
+    .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .choice {
+      border: none; background: #ffffff; border-radius: 16px; padding: 18px 10px;
+      font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: var(--shadow-sm);
+      color: #334155; transition: 0.2s;
+    }
+    .choice:hover { background: #f1f5f9; transform: scale(1.02); }
+    
+    .story-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .story-card {
+      border: none; border-radius: 16px; padding: 16px; background: #ffffff; box-shadow: var(--shadow-sm);
+    }
+    .story-card .who { font-weight: 900; margin-bottom: 6px; color: #0f172a; font-size: 16px; }
+    .story-card .line { font-size: 15px; color: #64748b; line-height: 1.5; }
+    
+    .mission-card {
+      text-align: center; border: 3px dashed #93c5fd; border-radius: 24px; padding: 32px; background: #eff6ff;
+    }
+    .mission-word { font-size: 42px; font-weight: 900; margin: 12px 0; color: #1e3a8a; display: flex; justify-content: center; align-items: center; }
+    .timer { font-size: 64px; font-weight: 900; color: #ef4444; margin: 12px 0; text-shadow: 2px 2px 0 #fca5a5; }
+    
+    .score-board { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .score {
+      padding: 24px 16px; border-radius: 24px; text-align: center; font-weight: 900; border: none; box-shadow: var(--shadow-sm);
+    }
+    .score.red { background: linear-gradient(135deg, #fecaca, #f87171); color: #7f1d1d; }
+    .score.blue { background: linear-gradient(135deg, #bfdbfe, #60a5fa); color: #1e3a8a; }
+    .score .num { font-size: 56px; margin: 10px 0; color: #fff; text-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    
+    .survey-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .survey-card {
+      border: none; border-radius: 20px; padding: 20px 10px; text-align: center; background: #ffffff; box-shadow: var(--shadow-sm);
+    }
+    .survey-card .em { margin-bottom: 8px; }
+    .survey-card .nm { font-weight: 800; color: #475569; }
+    .count { font-size: 46px; font-weight: 900; margin: 12px 0; color: #0f172a; }
+    
+    .roleplay { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .role {
+      border: none; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm); text-align: center;
+    }
+    .role .name { font-size: 20px; font-weight: 900; color: #3b82f6; margin-bottom: 8px; }
+    .role .line { font-size: 26px; font-weight: 900; line-height: 1.4; margin: 16px 0; color: #1e293b; }
+    
+    .eval-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .eval { border: none; background: #ffffff; border-radius: 16px; padding: 16px; text-align: center; font-weight: 800; box-shadow: var(--shadow-sm); color: #475569; }
+    
+    .teacher-tip {
+      margin-top: 20px; background: #fffbeb; border-left: 6px solid #f59e0b; border-radius: 12px;
+      padding: 16px 20px; line-height: 1.6; color: #92400e; font-size: 15px; box-shadow: var(--shadow-sm);
+    }
+    
+    .pill { display: inline-block; background: #dbeafe; color: #1e40af; border-radius: 999px; padding: 8px 16px; font-weight: 800; margin-bottom: 12px; }
+    .footer-note { margin-top: 16px; color: #64748b; font-size: 15px; text-align: center; font-weight: 500; }
+    .counter-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+    .confetti-piece {
+      position: fixed; left: 50%; top: 40%; width: 12px; height: 18px; z-index: 9999; pointer-events: none;
+      animation: fall 1500ms ease-out forwards;
+      border-radius: 4px;
+    }
+    @keyframes fall {
+      0% { opacity: 1; transform: translate(-50%, -50%) rotate(0); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(520deg); }
+    }
+
+    @media (max-width: 980px) {
+      .steps { grid-template-columns: repeat(3, 1fr); padding: 16px; }
+      .grid-2, .roleplay { grid-template-columns: 1fr; }
+      .survey-grid { grid-template-columns: repeat(3, 1fr); }
+      .choices { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .checklist, .story-cards, .score-board, .survey-grid, .eval-row { grid-template-columns: 1fr; }
+      h1 { font-size: 22px; } .badge { width: 56px; height: 56px; font-size: 20px; }
+      .topbar { padding: 16px; } .stage { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="title-row">
+      <div class="title-wrap">
+        <div class="badge">7</div>
+        <div>
+          <h1>I Have a Pencil</h1>
+          <div class="subtitle">교과서 느낌의 1차시 학생 중심 수업 게임</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn small blue" id="prevBtn">◀ 이전</button>
+        <button class="btn small blue" id="nextBtn">다음 ▶</button>
+        <button class="btn small yellow" id="speakKeyBtn">🔊 핵심 표현</button>
+        <button class="btn small green" id="bgmBtn">🎵 BGM 켜기</button>
+        <button class="btn small orange" id="fullBtn">⛶ 전체화면</button>
+        <button class="btn small" id="resetBtn">↺ 초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps" id="steps"></div>
+  <div class="stage" id="stage"></div>
+</div>
+
+<script>
+// 이미지 경로를 최상위 폴더에 맞게 수정했습니다.
+const ITEMS={
+  pencil:{img:"pencil.png", label:"pencil", article:"a pencil"},
+  ruler:{img:"ruler.png", label:"ruler", article:"a ruler"},
+  eraser:{img:"eraser.png", label:"eraser", article:"an eraser"},
+  notebook:{img:"notebook.png", label:"notebook", article:"a notebook"},
+  crayon:{img:"crayon.png", label:"crayon", article:"a crayon"}
+};
+const positions={
+  pencil:{left:"23%",top:"24%"},
+  ruler:{left:"61%",top:"29%"},
+  eraser:{left:"75%",top:"57%"},
+  notebook:{left:"35%",top:"64%"},
+  crayon:{left:"54%",top:"70%"}
+};
+const quizBank=[
+  {q:"Who has a ruler?",choices:["Eric","Amy","Hana"],answer:"Eric",note:"Eric says, “Yes, I do.”"},
+  {q:"Who has a pencil?",choices:["Amy","Olly","Woojin"],answer:"Amy",note:"Amy gives a pencil to a friend."},
+  {q:"Who has an eraser?",choices:["Olly","Hana","Eric"],answer:"Olly",note:"Olly says, “I have an eraser.”"}
+];
+const stepTitles=["1. Hidden Supplies","2. Mystery Bag","3. Listen & Catch","4. Supply Detective","5. Class Survey","6. Exit Mission"];
+let state={
+  currentStep:0,bgmOn:false,bgmTimer:null,hiddenFound:{},
+  mystery:{item:null,answer:null},
+  quizIndex:0,quizLocked:false,
+  detective:{item:"pencil",red:0,blue:0,timeLeft:20,timerId:null,running:false},
+  survey:{pencil:0,ruler:0,eraser:0,notebook:0,crayon:0},
+  exitItem:"pencil"
+};
+const stage=document.getElementById("stage");
+const stepsEl=document.getElementById("steps");
+
+function buildSteps(){
+  stepsEl.innerHTML=stepTitles.map((t,i)=>`<button class="step-btn ${state.currentStep===i?'active':''}" data-step="${i}">${t}</button>`).join("");
+  document.querySelectorAll(".step-btn").forEach(b=>b.onclick=()=>{state.currentStep=+b.dataset.step;render();});
+}
+function render(){
+  buildSteps();
+  [renderHidden,renderMystery,renderListen,renderDetective,renderSurvey,renderExit][state.currentStep]();
+}
+
+function renderHidden(){
+  const found=Object.keys(ITEMS).filter(k=>state.hiddenFound[k]).length;
+  stage.innerHTML=`
+  <div class="panel">
+    <h2>1. Hidden Supplies</h2>
+    <p class="guide">그림 속 숨어 있는 학용품을 찾아 클릭하고, 찾은 학생이 영어 단어를 말해 봅니다.</p>
+    <div class="grid-2">
+      <div class="box">
+        <h3>🌿 Find the school supplies!</h3>
+        <div class="scene">
+          <div class="cloud c1"></div><div class="cloud c2"></div>
+          <div class="tree"></div><div class="hill"></div>
+          <div class="butterfly b1">🦋</div><div class="butterfly b2">🦋</div>
+          ${Object.entries(ITEMS).map(([k,v])=>`<button class="hidden-item ${state.hiddenFound[k]?'found':''}" data-item="${k}" style="left:${positions[k].left};top:${positions[k].top}"><img src="${v.img}" alt="${v.label}" class="hidden-img"></button>`).join("")}
+        </div>
+      </div>
+      <div class="box">
+        <div class="chalk">
+          <div class="big">What did you find?</div>
+          <div class="sub"><img src="${ITEMS.pencil.img}" class="icon-img" style="margin-right:12px; width:30px; height:30px;"> I found a pencil!</div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="progress"><div class="bar" style="width:${found/Object.keys(ITEMS).length*100}%"></div></div>
+        <p class="guide" style="margin-top:8px">찾은 개수: <b>${found} / 5</b></p>
+        <div class="checklist">
+          ${Object.entries(ITEMS).map(([k,v])=>`<div class="check ${state.hiddenFound[k]?'done':''}"><span><img src="${v.img}" alt="${v.label}" class="icon-img">${v.label}</span><span>${state.hiddenFound[k]?'✔':'○'}</span></div>`).join("")}
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn green" id="askDemoBtn">🔊 질문 시범</button>
+          <button class="btn" id="hiddenResetBtn">다시 숨기기</button>
+        </div>
+        <div class="teacher-tip"><b>교사 팁</b><br>찾기 → 단어 말하기 → “Do you have a pencil?” 질문으로 바로 이어가세요.</div>
+      </div>
+    </div>
+  </div>`;
+  document.querySelectorAll(".hidden-item").forEach(b=>b.onclick=()=>{state.hiddenFound[b.dataset.item]=true;successTone();speak(ITEMS[b.dataset.item].label);render();});
+  document.getElementById("hiddenResetBtn").onclick=()=>{state.hiddenFound={};render();};
+  document.getElementById("askDemoBtn").onclick=async()=>{await speak("Do you have a pencil?");setTimeout(()=>speak("Yes, I do."),800);};
+}
+
+function renderMystery(){
+  let text="물건 버튼을 누르면 가방 속에 있는지 랜덤으로 확인합니다.", cls="", reveal="";
+  if(state.mystery.item){
+    const d=ITEMS[state.mystery.item];
+    text=`Q. Do you have ${d.article}?\nA. ${state.mystery.answer==="yes"?"Yes, I do.":"No, I don't."}`;
+    cls=state.mystery.answer==="yes"?"good":"bad";
+    reveal=state.mystery.answer==="yes"?`<img src="${d.img}" class="bag-img">`:"❌";
+  }
+  stage.innerHTML=`
+  <div class="panel">
+    <h2>2. Mystery Bag</h2>
+    <p class="guide">학생들이 먼저 큰 소리로 질문하고, 선생님이 버튼을 눌러 가방을 확인합니다.</p>
+    <div class="grid-2">
+      <div class="box">
+        <h3>🎒 Choose an item</h3>
+        <div class="item-row">${Object.entries(ITEMS).map(([k,v])=>`<button class="item-btn" data-m="${k}"><img src="${v.img}" alt="${v.label}" class="item-img">${v.label}</button>`).join("")}</div>
+        <div class="result ${cls}">${text}</div>
+        <div style="margin-top:16px">
+          <button class="btn yellow" id="randomM">🎲 랜덤 질문</button>
+          <button class="btn blue" id="repeatM">🔊 다시 읽기</button>
+          <button class="btn" id="clearM">지우기</button>
+        </div>
+        <div class="teacher-tip"><b>진행 멘트</b><br>“Everybody, ask together!” → 학생들이 질문 → “Open the bag!” → 결과 확인</div>
+      </div>
+      <div class="box">
+        <h3>📚 Mystery School Bag</h3>
+        <div class="bag-area"><div class="bag"></div><div class="bag-reveal ${state.mystery.answer==='no'?'fail':''}">${reveal}</div></div>
+        <div class="chalk" style="margin-top:20px"><div class="big" style="font-size:27px">Do you have a pencil?</div><div class="sub">Yes, I do. / No, I don’t.</div></div>
+      </div>
+    </div>
+  </div>`;
+  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>doMystery(b.dataset.m));
+  document.getElementById("randomM").onclick=()=>{const ks=Object.keys(ITEMS);doMystery(ks[Math.floor(Math.random()*ks.length)]);};
+  document.getElementById("repeatM").onclick=()=>{if(!state.mystery.item)return;const d=ITEMS[state.mystery.item];speak(`Do you have ${d.article}?`);setTimeout(()=>speak(state.mystery.answer==="yes"?"Yes, I do.":"No, I don't."),800);};
+  document.getElementById("clearM").onclick=()=>{state.mystery={item:null,answer:null};render();};
+}
+function doMystery(k){
+  const ans=Math.random()<.55?"yes":"no";state.mystery={item:k,answer:ans};render();
+  const d=ITEMS[k];speak(`Do you have ${d.article}?`);setTimeout(()=>speak(ans==="yes"?"Yes, I do.":"No, I don't."),850);
+  ans==="yes"?(successTone(),confetti()):failTone();
+}
+
+function renderListen(){
+  const q=quizBank[state.quizIndex];
+  stage.innerHTML=`
+  <div class="panel">
+    <h2>3. Listen & Catch</h2>
+    <p class="guide">교과서의 대화 흐름을 바탕으로 누가 무엇을 가지고 있는지 추리합니다.</p>
+    <div class="grid-2">
+      <div class="box">
+        <h3>🧠 Quiz ${state.quizIndex+1} / ${quizBank.length}</h3>
+        <div class="chalk"><div class="big">${q.q}</div><div class="sub">Guess first!</div></div>
+        <div class="choices" style="margin-top:20px">${q.choices.map(c=>`<button class="choice" data-c="${c}">${c}</button>`).join("")}</div>
+        <div class="result" id="feedback">학생들이 먼저 손가락으로 정답을 가리킨 뒤 버튼을 눌러 보세요.</div>
+        <div style="margin-top:16px">
+          <button class="btn yellow" id="sayQ">🔊 질문 읽기</button>
+          <button class="btn blue" id="nextQ">다음 문제</button>
+          <button class="btn" id="resetQ">처음부터</button>
+        </div>
+      </div>
+      <div class="box">
+        <h3>🦋 Story Hints</h3>
+        <div class="story-cards">
+          <div class="story-card"><div class="who">Eric</div><div class="line">ruler → “Yes, I do.”</div></div>
+          <div class="story-card"><div class="who">Amy</div><div class="line">gives a pencil</div></div>
+          <div class="story-card"><div class="who">Hana</div><div class="line">doesn’t have an eraser</div></div>
+          <div class="story-card"><div class="who">Olly</div><div class="line">“I have an eraser.”</div></div>
+        </div>
+        <div class="teacher-tip"><b>교사 팁</b><br>정답 맞히기보다 먼저 추측하게 하고, 정답 확인 뒤 영어 문장을 한 번 더 말하게 하세요.</div>
+      </div>
+    </div>
+  </div>`;
+  document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
+    if(state.quizLocked)return; state.quizLocked=true;
+    const ok=b.dataset.c===q.answer, f=document.getElementById("feedback");
+    f.className="result "+(ok?"good":"bad");f.textContent=(ok?"Great! ":"Try again! ")+`Correct answer: ${q.answer}\n${q.note}`;
+    ok?(successTone(),confetti(),speak("Great job!")):(failTone(),speak("Try again."));
+  });
+  document.getElementById("sayQ").onclick=()=>speak(q.q);
+  document.getElementById("nextQ").onclick=()=>{state.quizIndex=(state.quizIndex+1)%quizBank.length;state.quizLocked=false;render();};
+  document.getElementById("resetQ").onclick=()=>{state.quizIndex=0;state.quizLocked=false;render();};
+}
+
+function renderDetective(){
+  const d=ITEMS[state.detective.item];
+  stage.innerHTML=`
+  <div class="panel">
+    <h2>4. Supply Detective</h2>
+    <p class="guide">학생들이 교실을 돌아다니며 친구에게 실제로 질문하는 메인 활동입니다.</p>
+    <div class="grid-2">
+      <div class="box">
+        <div class="mission-card">
+          <div class="pill">🔎 Mission</div>
+          <div style="font-size:28px;font-weight:900;margin-top:8px">Find someone who has…</div>
+          <div class="mission-word"><img src="${d.img}" alt="${d.label}" class="large-img"> ${d.label}</div>
+          <div style="font-size:24px;font-weight:900; color:#334155; margin-top:10px;">Do you have ${d.article}?</div>
+          <div class="timer">${state.detective.timeLeft}</div>
+          <button class="btn green" id="startT" style="font-size:18px; padding:12px 24px;">${state.detective.running?"⏳ 진행 중":"▶ 20초 시작"}</button>
+          <div style="margin-top:12px">
+            <button class="btn yellow" id="newMission">🎲 새 미션</button>
+            <button class="btn" id="sayD">🔊 문장 읽기</button>
+          </div>
+        </div>
+        <div class="teacher-tip"><b>규칙</b><br>한 친구에게 한 가지 물건만 질문하기! 성공하면 자기 자리로 돌아오지 말고 다른 친구도 만나기.</div>
+      </div>
+      <div class="box">
+        <h3>🏆 Team Score</h3>
+        <div class="score-board">
+          <div class="score red">❤️ Red Team<div class="num">${state.detective.red}</div><button class="btn small red" id="redPlus">+1 Point</button></div>
+          <div class="score blue">💙 Blue Team<div class="num">${state.detective.blue}</div><button class="btn small blue" id="bluePlus">+1 Point</button></div>
+        </div>
+        <div style="margin-top:16px; text-align:center;"><button class="btn" id="resetD">점수/타이머 초기화</button></div>
+        <div class="chalk" style="margin-top:20px"><div class="sub" style="font-size:18px">A: Do you have ${d.article}?</div><div class="sub" style="font-size:18px">B: Yes, I do. / No, I don’t.</div></div>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById("newMission").onclick=()=>{const ks=Object.keys(ITEMS).filter(k=>k!==state.detective.item);state.detective.item=ks[Math.floor(Math.random()*ks.length)];state.detective.timeLeft=20;render();};
+  document.getElementById("sayD").onclick=()=>speak(`Do you have ${d.article}?`);
+  document.getElementById("startT").onclick=()=>{if(!state.detective.running)startTimer();};
+  document.getElementById("redPlus").onclick=()=>{state.detective.red++;successTone();confetti();render();};
+  document.getElementById("bluePlus").onclick=()=>{state.detective.blue++;successTone();confetti();render();};
+  document.getElementById("resetD").onclick=()=>{clearInterval(state.detective.timerId);state.detective={item:"pencil",red:0,blue:0,timeLeft:20,timerId:null,running:false};render();};
+}
+
+function startTimer(){
+  state.detective.running=true;render();
+  state.detective.timerId=setInterval(()=>{
+    state.detective.timeLeft--;
+    const t=document.querySelector(".timer");if(t)t.textContent=state.detective.timeLeft;
+    if(state.detective.timeLeft<=0){clearInterval(state.detective.timerId);state.detective.running=false;speak("Time's up!");successTone();render();}
+  },1000);
+}
+
+function renderSurvey(){
+  const max=Math.max(...Object.values(state.survey)), tops=max>0?Object.entries(state.survey).filter(([,v])=>v===max).map(([k])=>ITEMS[k].label).join(", "):"None yet";
+  stage.innerHTML=`
+  <div class="panel">
+    <h2>5. Class Survey</h2>
+    <p class="guide">우리 반 친구들이 실제로 어떤 학용품을 가지고 있는지 숫자로 기록해 봅니다.</p>
+    <div class="box">
+      <div class="survey-grid">
+        ${Object.entries(ITEMS).map(([k,v])=>`<div class="survey-card"><div class="em"><img src="${v.img}" alt="${v.label}" class="item-img"></div><div class="nm">${v.label}</div><div class="count">${state.survey[k]}</div><div class="counter-btns"><button class="btn small red" data-minus="${k}">-1</button><button class="btn small green" data-plus="${k}">+1</button><button class="btn small yellow" data-say="${k}">🔊 Ask</button></div></div>`).join("")}
+      </div>
+      <div class="result good" style="margin-top:20px; font-size:20px;">Most common item: <b>${tops}</b></div>
+      <div style="margin-top:16px; text-align:center;"><button class="btn" id="resetS">초기화</button></div>
+      <div class="teacher-tip"><b>학생 역할 확대</b><br>한 명은 질문 담당, 한 명은 숫자 기록 담당으로 맡기면 더 학생 중심으로 운영할 수 있습니다.</div>
+    </div>
+  </div>`;
+  document.querySelectorAll("[data-plus]").forEach(b=>b.onclick=()=>{state.survey[b.dataset.plus]++;render();});
+  document.querySelectorAll("[data-minus]").forEach(b=>b.onclick=()=>{const k=b.dataset.minus;state.survey[k]=Math.max(0,state.survey[k]-1);render();});
+  document.querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>speak(`Do you have ${ITEMS[b.dataset.say].article}?`));
+  document.getElementById("resetS").onclick=()=>{for(const k in state.survey)state.survey[k]=0;render();};
+}
+
+function renderExit(){
+  const d=ITEMS[state.exitItem];
+  stage.innerHTML=`
+  <div class="panel">
+    <h2>6. Exit Mission</h2>
+    <p class="guide">짝과 마지막으로 한 번씩 질문하고 대답하며 오늘 수업을 정리합니다.</p>
+    <div class="box">
+      <div class="chalk"><div class="big">Final Pair Talk</div><div class="sub" style="font-size:36px; margin-top:20px;"><img src="${d.img}" alt="${d.label}" class="large-img"> ${d.label}</div></div>
+      <div class="roleplay" style="margin-top:24px">
+        <div class="role"><div class="name">Student A</div><div class="line">Do you have ${d.article}?</div><button class="btn small yellow" id="sA">🔊 읽기</button></div>
+        <div class="role"><div class="name">Student B</div><div class="line">Yes, I do.<br>/ No, I don’t.</div><button class="btn small yellow" id="sB">🔊 읽기</button></div>
+      </div>
+      <div style="margin-top:20px; text-align:center;"><button class="btn green" id="newE">🎲 새 물건</button><button class="btn blue" id="allE">🔊 전체 대화</button></div>
+      <div class="eval-row"><div class="eval">👍 혼자 질문할 수 있어요</div><div class="eval">👌 보고 질문할 수 있어요</div><div class="eval">✋ 도움이 필요해요</div></div>
+      <div class="footer-note">“One last question!”이라고 말한 뒤 1분 안에 짝과 빠르게 마무리하면 좋습니다.</div>
+    </div>
+  </div>`;
+  document.getElementById("newE").onclick=()=>{const ks=Object.keys(ITEMS).filter(k=>k!==state.exitItem);state.exitItem=ks[Math.floor(Math.random()*ks.length)];render();};
+  document.getElementById("sA").onclick=()=>speak(`Do you have ${d.article}?`);
+  document.getElementById("sB").onclick=async()=>{await speak("Yes, I do.");setTimeout(()=>speak("No, I don't."),700);};
+  document.getElementById("allE").onclick=async()=>{await speak(`Do you have ${d.article}?`);setTimeout(()=>speak("Yes, I do."),800);};
+}
+document.getElementById("prevBtn").onclick=()=>{state.currentStep=(state.currentStep-1+6)%6;render();};
+document.getElementById("nextBtn").onclick=()=>{state.currentStep=(state.currentStep+1)%6;render();};
+document.getElementById("speakKeyBtn").onclick=async()=>{await speak("Do you have a pencil?");setTimeout(()=>speak("Yes, I do."),800);};
+document.getElementById("fullBtn").onclick=async()=>{if(!document.fullscreenElement)await document.documentElement.requestFullscreen();else await document.exitFullscreen();};
+document.getElementById("resetBtn").onclick=()=>location.reload();
+
+let audioCtx=null;
+function ensureAudio(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();}
+function tone(freq=440,dur=.15,type="triangle",vol=.03,when=0){
+  ensureAudio();const n=audioCtx.currentTime+when,o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.type=type;o.frequency.value=freq;g.gain.value=vol;g.gain.exponentialRampToValueAtTime(.0001,n+dur);
+  o.connect(g);g.connect(audioCtx.destination);o.start(n);o.stop(n+dur);
+}
+function successTone(){tone(523,.12,"triangle",.035,0);tone(659,.12,"triangle",.035,.09);tone(784,.2,"triangle",.04,.18);}
+function failTone(){tone(290,.12,"sawtooth",.025,0);tone(230,.18,"sawtooth",.025,.12);}
+document.getElementById("bgmBtn").onclick=()=>{
+  if(state.bgmOn){clearInterval(state.bgmTimer);state.bgmOn=false;document.getElementById("bgmBtn").textContent="🎵 BGM 켜기";return;}
+  state.bgmOn=true;document.getElementById("bgmBtn").textContent="🎵 BGM 끄기";ensureAudio();
+  const notes=[523,659,784,659,587,659,523,494];let i=0;
+  state.bgmTimer=setInterval(()=>{tone(notes[i%notes.length],.18,"triangle",.012);i++;},400);
+};
+function speak(text){
+  return new Promise(res=>{
+    if(!("speechSynthesis" in window)){res();return;}
+    speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=.9;u.pitch=1;u.onend=res;speechSynthesis.speak(u);
+  });
+}
+function confetti(){
+  const colors=["#ff9a9e","#fecfef","#a8e6cf","#dcedc1","#ffd3b6"];
+  for(let i=0;i<35;i++){
+    const p=document.createElement("div");p.className="confetti-piece";p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.setProperty("--tx",`${Math.random()*600-300}px`);p.style.setProperty("--ty",`${Math.random()*500+100}px`);
+    document.body.appendChild(p);setTimeout(()=>p.remove(),1500);
+  }
+}
+render();
+</script>
+</body>
+</html>
